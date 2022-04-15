@@ -145,10 +145,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Lane_Detection.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Video_Cap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="lenna.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Lane_Detection.h" />
+    <ClInclude Include="Video_Cap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
