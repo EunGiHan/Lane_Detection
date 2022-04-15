@@ -21,7 +21,7 @@ double LaneDetection::getrpos() {
 
 
 void LaneDetection::setPts() {
-    /* ROI Æ÷ÀÎÆ® ¼³Á¤ÇÏ´Â ÇÔ¼ö */
+    /* ROI í¬ì¸íŠ¸ ì„¤ì •í•˜ëŠ” í•¨ìˆ˜ */
     pts.push_back(Point(0, roi_offset - detectionRange));
     pts.push_back(Point(w, roi_offset - detectionRange));
     pts.push_back(Point(w, roi_offset + 20));
@@ -30,21 +30,21 @@ void LaneDetection::setPts() {
 
 
 vector<vector<Vec4i>> LaneDetection::SeperateLines(vector<Vec4i> lines) {
-    /* ¿ŞÂÊ°ú ¿À¸¥ÂÊÀ» Â÷¼±À» ±¸ºĞ(ºĞ¸®)ÇÏ´Â ÇÔ¼ö */
+    /* ì™¼ìª½ê³¼ ì˜¤ë¥¸ìª½ì„ ì°¨ì„ ì„ êµ¬ë¶„(ë¶„ë¦¬)í•˜ëŠ” í•¨ìˆ˜ */
 
-    vector<vector<Vec4i>> selected_lines;   // ÀÌ»óÇÑ Á÷¼±µéÀ» Á¦¿ÜÇÏ°í, ¿ŞÂÊ/¿À¸¥ÂÊ Â÷¼±µé¸¸ ÀúÀå ({¿ŞÂÊ Â÷¼±µé, ¿À¸¥ÂÊ Â÷¼±µé} ·Î 2°³ ¿ä¼Ò °¡Áü)
-    vector<Vec4i> left_lines, right_lines;  // °¢°¢ ¿ŞÂÊ, ¿À¸¥ÂÊ Â÷¼±. selected_linesÀÇ ¿ä¼Ò°¡ µÊ
-    Point ini, fin; // °¢°¢ ½ÃÀÛÁ¡, ³¡Á¡
+    vector<vector<Vec4i>> selected_lines;   // ì´ìƒí•œ ì§ì„ ë“¤ì„ ì œì™¸í•˜ê³ , ì™¼ìª½/ì˜¤ë¥¸ìª½ ì°¨ì„ ë“¤ë§Œ ì €ì¥ ({ì™¼ìª½ ì°¨ì„ ë“¤, ì˜¤ë¥¸ìª½ ì°¨ì„ ë“¤} ë¡œ 2ê°œ ìš”ì†Œ ê°€ì§)
+    vector<Vec4i> left_lines, right_lines;  // ê°ê° ì™¼ìª½, ì˜¤ë¥¸ìª½ ì°¨ì„ . selected_linesì˜ ìš”ì†Œê°€ ë¨
+    Point ini, fin; // ê°ê° ì‹œì‘ì , ëì 
         
     for (Vec4i line : lines) {
-        /* Á÷¼±µé ±â¿ï±â °è»ê.¼öÆò¼±ÀÎ °ÍµéÀº Á¦¿Ü */
+        /* ì§ì„ ë“¤ ê¸°ìš¸ê¸° ê³„ì‚°.ìˆ˜í‰ì„ ì¸ ê²ƒë“¤ì€ ì œì™¸ */
 
         ini = Point(line[0], line[1]);
         fin = Point(line[2], line[3]);
         double slope = static_cast<double>(fin.y - ini.y) / static_cast<double>(fin.x - ini.x + 0.00001);
 
         if (abs(slope) < slope_threshold)
-            continue;   // ¼öÆò¿¡ °¡±õ°Ô ´©¿î Á÷¼±Àº Á¦¿Ü½ÃÅ´
+            continue;   // ìˆ˜í‰ì— ê°€ê¹ê²Œ ëˆ„ìš´ ì§ì„ ì€ ì œì™¸ì‹œí‚´
 
         if (slope > 0)
             right_lines.push_back(line);
@@ -53,7 +53,7 @@ vector<vector<Vec4i>> LaneDetection::SeperateLines(vector<Vec4i> lines) {
     }
 
     if (left_lines.size() != 0) {
-        /* Á÷¼±ÀÌ °ËÃâµÇ¾ú´Ù¸é Ãß°¡ÇÏ°í, ¾Æ´Ï¸é ¹Ì°ËÃâ Ç¥½Ã */
+        /* ì§ì„ ì´ ê²€ì¶œë˜ì—ˆë‹¤ë©´ ì¶”ê°€í•˜ê³ , ì•„ë‹ˆë©´ ë¯¸ê²€ì¶œ í‘œì‹œ */
         selected_lines.push_back(left_lines);
         left_found = true;
     }
@@ -62,7 +62,7 @@ vector<vector<Vec4i>> LaneDetection::SeperateLines(vector<Vec4i> lines) {
     }
 
     if (right_lines.size() != 0) {
-        /* Á÷¼±ÀÌ °ËÃâµÇ¾ú´Ù¸é Ãß°¡ÇÏ°í, ¾Æ´Ï¸é ¹Ì°ËÃâ Ç¥½Ã */
+        /* ì§ì„ ì´ ê²€ì¶œë˜ì—ˆë‹¤ë©´ ì¶”ê°€í•˜ê³ , ì•„ë‹ˆë©´ ë¯¸ê²€ì¶œ í‘œì‹œ */
         selected_lines.push_back(right_lines);
         right_found = true;
     }
@@ -70,20 +70,20 @@ vector<vector<Vec4i>> LaneDetection::SeperateLines(vector<Vec4i> lines) {
         right_found = false;
     }
     
-    return selected_lines;  // {¿ŞÂÊ Á÷¼±µé, ¿À¸¥ÂÊ Á÷¼±µé} ÇüÅÂ·Î ¹İÈ¯
+    return selected_lines;  // {ì™¼ìª½ ì§ì„ ë“¤, ì˜¤ë¥¸ìª½ ì§ì„ ë“¤} í˜•íƒœë¡œ ë°˜í™˜
 }
 
 void LaneDetection::FindLanes(std::vector<std::vector<cv::Vec4i>> lines) {
-    /* Á÷¼±µé Áß ´ëÇ¥¼± ÇÏ³ª¸¦ ¸¸µå´Â ÇÔ¼ö */
+    /* ì§ì„ ë“¤ ì¤‘ ëŒ€í‘œì„  í•˜ë‚˜ë¥¼ ë§Œë“œëŠ” í•¨ìˆ˜ */
 
     double ini_x = 0, fin_x = 0, ini_y = 0, fin_y = 0;
     vector<Vec4i> left_lines, right_lines;
 
     if (left_found) {
-        left_lines = lines[0];    // ÇÔ¼ö SperateLines()¿¡¼­ µµÃâÇÑ ¿ŞÂÊ Â÷¼±µé
+        left_lines = lines[0];    // í•¨ìˆ˜ SperateLines()ì—ì„œ ë„ì¶œí•œ ì™¼ìª½ ì°¨ì„ ë“¤
 
         //if (left_lines.size() <= 0) {
-        //    /* ¸¸¾àÀ» À§ÇÑ Ã³¸®. ³ª¿À´Â °æ¿ì°¡ ¾ø¾î ÁÖ¼® Ã³¸®ÇÔ */
+        //    /* ë§Œì•½ì„ ìœ„í•œ ì²˜ë¦¬. ë‚˜ì˜¤ëŠ” ê²½ìš°ê°€ ì—†ì–´ ì£¼ì„ ì²˜ë¦¬í•¨ */
         //    left_found = false;
         //    return;
         //}
@@ -100,20 +100,20 @@ void LaneDetection::FindLanes(std::vector<std::vector<cv::Vec4i>> lines) {
         fin_x = fin_x / left_lines.size();
         fin_y = fin_y / left_lines.size();
 
-        left_m = (fin_y - ini_y) / (fin_x - ini_x); // ´ëÇ¥¼±ÀÇ ±â¿ï±â
-        left_b = Point((ini_x + fin_x) / 2, (ini_y + fin_y) / 2);   // ´ëÇ¥¼±ÀÌ Áö³ª´Â ÇÑ Á¡
+        left_m = (fin_y - ini_y) / (fin_x - ini_x); // ëŒ€í‘œì„ ì˜ ê¸°ìš¸ê¸°
+        left_b = Point((ini_x + fin_x) / 2, (ini_y + fin_y) / 2);   // ëŒ€í‘œì„ ì´ ì§€ë‚˜ëŠ” í•œ ì 
     }
 
     if (right_found) {
-        ini_x = 0; fin_x = 0; ini_y = 0; fin_y = 0; // ´Ù½Ã ÃÊ±âÈ­
+        ini_x = 0; fin_x = 0; ini_y = 0; fin_y = 0; // ë‹¤ì‹œ ì´ˆê¸°í™”
 
         if (left_found)
-            right_lines = lines[1];    // ÇÔ¼ö SperateLines()¿¡¼­ µµÃâÇÑ ¿À¸¥ÂÊ Â÷¼±µé
+            right_lines = lines[1];    // í•¨ìˆ˜ SperateLines()ì—ì„œ ë„ì¶œí•œ ì˜¤ë¥¸ìª½ ì°¨ì„ ë“¤
         else
-            right_lines = lines[0];    // ÇÔ¼ö SperateLines()¿¡¼­ µµÃâÇÑ ¿À¸¥ÂÊ Â÷¼±µé
+            right_lines = lines[0];    // í•¨ìˆ˜ SperateLines()ì—ì„œ ë„ì¶œí•œ ì˜¤ë¥¸ìª½ ì°¨ì„ ë“¤
 
         //if (right_lines.size() <= 0) {
-        //    /* ¸¸¾àÀ» À§ÇÑ Ã³¸®. ³ª¿À´Â °æ¿ì°¡ ¾ø¾î ÁÖ¼® Ã³¸®ÇÔ */
+        //    /* ë§Œì•½ì„ ìœ„í•œ ì²˜ë¦¬. ë‚˜ì˜¤ëŠ” ê²½ìš°ê°€ ì—†ì–´ ì£¼ì„ ì²˜ë¦¬í•¨ */
         //    right_found = false;
         //    return;
         //}
@@ -136,15 +136,15 @@ void LaneDetection::FindLanes(std::vector<std::vector<cv::Vec4i>> lines) {
 }
 
 vector<Point> LaneDetection::FindPos() {
-    /* rpos, lpos °è»ê */
+    /* rpos, lpos ê³„ì‚° */
 
-    vector<Point> lanes;    // È­¸é¿¡ Á÷¼±À» ±×¸± Á¡µé
-    int ini_y = 420;    // Á÷¼± ½ÃÀÛ yÁÂÇ¥
-    int fin_y = 380;    // Á÷¼± ³¡ yÁÂÇ¥
+    vector<Point> lanes;    // í™”ë©´ì— ì§ì„ ì„ ê·¸ë¦´ ì ë“¤
+    int ini_y = 420;    // ì§ì„  ì‹œì‘ yì¢Œí‘œ
+    int fin_y = 380;    // ì§ì„  ë yì¢Œí‘œ
 
     if (left_found) {
-        /* offset ¸ÂÃç¼­ rpos & lpos ±¸ÇÏ°í, ±×¸®±âÀÇ ½ÃÀÛÁ¡°ú ³¡Á¡À» ±¸ÇÔ */
-        lpos = ((offset - left_b.y) / left_m) + left_b.x;   // offset¿¡¼­ ¿ŞÂÊ Â÷¼± À§Ä¡
+        /* offset ë§ì¶°ì„œ rpos & lpos êµ¬í•˜ê³ , ê·¸ë¦¬ê¸°ì˜ ì‹œì‘ì ê³¼ ëì ì„ êµ¬í•¨ */
+        lpos = ((offset - left_b.y) / left_m) + left_b.x;   // offsetì—ì„œ ì™¼ìª½ ì°¨ì„  ìœ„ì¹˜
         if (lpos < 0) lpos = 0;
 
         double left_ini_x = ((ini_y - left_b.y) / left_m) + left_b.x;
@@ -153,7 +153,7 @@ vector<Point> LaneDetection::FindPos() {
         lanes.push_back(Point(left_fin_x, fin_y));
     }
     else
-        lpos = 0;   // ¹Ì°ËÃâ ½Ã 0À¸·Î ¼³Á¤
+        lpos = 0;   // ë¯¸ê²€ì¶œ ì‹œ 0ìœ¼ë¡œ ì„¤ì •
 
     if (right_found) {
         rpos = ((offset - right_b.y) / right_m) + right_b.x;
@@ -165,10 +165,10 @@ vector<Point> LaneDetection::FindPos() {
         lanes.push_back(Point(right_fin_x, fin_y));
     }        
     else
-        rpos = 640; // ¹Ì°ËÃâ ½Ã 640À¸·Î ¼³Á¤
+        rpos = 640; // ë¯¸ê²€ì¶œ ì‹œ 640ìœ¼ë¡œ ì„¤ì •
 
     if ((lpos > rpos) || (rpos - lpos < 400)) {
-        /* ¿ŞÂ÷¼±°ú ¿À¸¥Â÷¼±ÀÌ À§Ä¡ ¹Ù²î¾î ÀÖ°Å³ª, µÑÀÌ ³Ê¹« °¡±õ´Ù¸é ¿À°ËÃâ Ã³¸® */
+        /* ì™¼ì°¨ì„ ê³¼ ì˜¤ë¥¸ì°¨ì„ ì´ ìœ„ì¹˜ ë°”ë€Œì–´ ìˆê±°ë‚˜, ë‘˜ì´ ë„ˆë¬´ ê°€ê¹ë‹¤ë©´ ì˜¤ê²€ì¶œ ì²˜ë¦¬ */
         lpos = 0;
         rpos = 640;
         left_found = false;
@@ -176,7 +176,7 @@ vector<Point> LaneDetection::FindPos() {
     }
     
     if ((prev_lpos != 0) && (abs(prev_lpos - lpos) > pose_gap_threshold)) {
-        /* ¹Ì°ËÃâÀÌ¾ú´Ù°¡ µ¹¾Æ¿À´Â »óÈ²ÀÌ ¾Æ´Ô¿¡µµ, ÀÌÀü À§Ä¡¿Í ÇöÀç À§Ä¡°¡ Â÷ÀÌ°¡ Å©´Ù¸é ¿À°ËÃâ Ã³¸®*/
+        /* ë¯¸ê²€ì¶œì´ì—ˆë‹¤ê°€ ëŒì•„ì˜¤ëŠ” ìƒí™©ì´ ì•„ë‹˜ì—ë„, ì´ì „ ìœ„ì¹˜ì™€ í˜„ì¬ ìœ„ì¹˜ê°€ ì°¨ì´ê°€ í¬ë‹¤ë©´ ì˜¤ê²€ì¶œ ì²˜ë¦¬*/
         lpos = 0;
         left_found = false;
     }
@@ -186,7 +186,7 @@ vector<Point> LaneDetection::FindPos() {
     }
 
     if (left_found && prev_lpos == 0 && !lpos_queue.empty()) {
-        /* ¹Ì°ËÃâÀÌ¾ú´Ù°¡ ´Ù½Ã °ËÃâµÇ¸é Å¥¸¦ 0À¸·Î ¸¸µé¾î ÇÑÂü Àü¿¡ ´©ÀûµÇ¾ú´ø °ªÀ» ÃÊ±âÈ­ */
+        /* ë¯¸ê²€ì¶œì´ì—ˆë‹¤ê°€ ë‹¤ì‹œ ê²€ì¶œë˜ë©´ íë¥¼ 0ìœ¼ë¡œ ë§Œë“¤ì–´ í•œì°¸ ì „ì— ëˆ„ì ë˜ì—ˆë˜ ê°’ì„ ì´ˆê¸°í™” */
         lpos_queue.erase(lpos_queue.begin(), lpos_queue.end());
         lpos = MAF(lpos, LEFT);
     }
@@ -201,33 +201,33 @@ vector<Point> LaneDetection::FindPos() {
     prev_lpos = lpos;
     prev_rpos = rpos;
     
-    return lanes; // µÑ ´Ù °ËÃâ ½Ã {l_ini, l_fin, r_ini, r_fin} À¸·Î 4°³ Point
+    return lanes; // ë‘˜ ë‹¤ ê²€ì¶œ ì‹œ {l_ini, l_fin, r_ini, r_fin} ìœ¼ë¡œ 4ê°œ Point
 }
 
 Mat LaneDetection::DrawLines(Mat src, vector<Point> lanes) {
     if (lanes.size() <= 0 || (!left_found && !right_found)) return src;
         
     if (left_found && right_found) {
-        /* µÑ ´Ù °ËÃâ ½Ã Â÷¼± ±×¸®±â */
+        /* ë‘˜ ë‹¤ ê²€ì¶œ ì‹œ ì°¨ì„  ê·¸ë¦¬ê¸° */
         line(src, lanes[0], lanes[1], Scalar(0, 0, 255), 1, LINE_AA);   // left lane
         line(src, lanes[2], lanes[3], Scalar(0, 0, 255), 1, LINE_AA);   // right lane
     }
     else if ((!left_found && right_found) || (left_found && !right_found)) {
-        /* ÇÏ³ª¸¸ °ËÃâ ½Ã Â÷¼± ±×¸®±â */
+        /* í•˜ë‚˜ë§Œ ê²€ì¶œ ì‹œ ì°¨ì„  ê·¸ë¦¬ê¸° */
         line(src, lanes[0], lanes[1], Scalar(0, 0, 255), 1, LINE_AA);
     }
 
-    rectangle(src, Point(lpos - box_width / 2, offset - box_height / 2), Point(lpos + box_width / 2, offset + box_height / 2), Scalar(255, 255, 0), 2); // ¿ŞÂ÷¼±
-    rectangle(src, Point(rpos - box_width / 2, offset - box_height / 2), Point(rpos + box_width / 2, offset + box_height / 2), Scalar(255, 0, 255), 2); // ¿À¸¥Â÷¼±
+    rectangle(src, Point(lpos - box_width / 2, offset - box_height / 2), Point(lpos + box_width / 2, offset + box_height / 2), Scalar(255, 255, 0), 2); // ì™¼ì°¨ì„ 
+    rectangle(src, Point(rpos - box_width / 2, offset - box_height / 2), Point(rpos + box_width / 2, offset + box_height / 2), Scalar(255, 0, 255), 2); // ì˜¤ë¥¸ì°¨ì„ 
 
     return src;
 }
 
 double LaneDetection::MAF(double pos, int left_right) {
-    /* ÀÌµ¿Æò±ÕÇÊÅÍ·Î lpos, rpos °è»ê */
+    /* ì´ë™í‰ê· í•„í„°ë¡œ lpos, rpos ê³„ì‚° */
 
-    double sum = 0; // Å¥ ³»ºÎ ¿ø¼Ò ÇÕ ±¸ÇÒ º¯¼ö
-    double weights_sum = 0; // °¡ÁßÄ¡ ÇÕ ±¸ÇÒ º¯¼ö
+    double sum = 0; // í ë‚´ë¶€ ì›ì†Œ í•© êµ¬í•  ë³€ìˆ˜
+    double weights_sum = 0; // ê°€ì¤‘ì¹˜ í•© êµ¬í•  ë³€ìˆ˜
 
     if (left_right == LEFT) {
         if (lpos_queue.size() >= 5)
