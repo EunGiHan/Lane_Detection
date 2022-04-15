@@ -15,11 +15,11 @@ int main()
     LaneDetection ld;
 
     Mat frame, bin, roi, edge, edge_roi;
-    vector<Vec4i> lines;    // ÇãÇÁ¶óÀÎ º¯È¯ °á°ú¸¦ ´ãÀ» Á÷¼±µé
-    vector<vector<Vec4i>> selected_lines;   // ¼öÆò¿¡ °¡±î¿î Á÷¼±Àº Á¦¿ÜÇÏ°í ÇÊÅÍ¸µµÈ Á÷¼±µé
-    vector<Point> lanes;    // È­¸é¿¡ ±×¸± Á÷¼±ÀÇ Æ÷ÀÎÆ®µé ¸ğÀ½
+    vector<Vec4i> lines;    // í—ˆí”„ë¼ì¸ ë³€í™˜ ê²°ê³¼ë¥¼ ë‹´ì„ ì§ì„ ë“¤
+    vector<vector<Vec4i>> selected_lines;   // ìˆ˜í‰ì— ê°€ê¹Œìš´ ì§ì„ ì€ ì œì™¸í•˜ê³  í•„í„°ë§ëœ ì§ì„ ë“¤
+    vector<Point> lanes;    // í™”ë©´ì— ê·¸ë¦´ ì§ì„ ì˜ í¬ì¸íŠ¸ë“¤ ëª¨ìŒ
 
-    int frame_cnt = 0;  // 30ÇÁ·¹ÀÓÀ» ¼¿ º¯¼ö
+    int frame_cnt = 0;  // 30í”„ë ˆì„ì„ ì…€ ë³€ìˆ˜
     
     ofstream output("output.csv");   // Save 2D array to CSV
     VideoCapture cap("subProject.avi");
@@ -33,7 +33,7 @@ int main()
     ld.w = cvRound(cap.get(CAP_PROP_FRAME_WIDTH));
     
     Mat mask = Mat::zeros(ld.h, ld.w, CV_8UC1);
-    ld.setPts();    // ROI ¼³Á¤
+    ld.setPts();    // ROI ì„¤ì •
     fillPoly(mask, ld.pts, Scalar(255));
 
     while (true) {
@@ -43,17 +43,17 @@ int main()
             break;
         }
 
-        bin = vc.binaryImg(frame);  // ÀÌÁø ÀÌ¹ÌÁö·Î º¯È¯
-        Canny(bin, edge, 120, 200); // ¿¡Áö °ËÃâ
-        edge.copyTo(roi, mask); // ROI ¸¸Å­ ÀÚ¸£±â
-        HoughLinesP(roi, lines, 1, CV_PI / 180, 20, 5, 10); // Á÷¼± °ËÃâ
+        bin = vc.binaryImg(frame);  // ì´ì§„ ì´ë¯¸ì§€ë¡œ ë³€í™˜
+        Canny(bin, edge, 120, 200); // ì—ì§€ ê²€ì¶œ
+        edge.copyTo(roi, mask); // ROI ë§Œí¼ ìë¥´ê¸°
+        HoughLinesP(roi, lines, 1, CV_PI / 180, 20, 5, 10); // ì§ì„  ê²€ì¶œ
 
 
         if (lines.size() > 0) {
-            selected_lines = ld.SeperateLines(lines);   // ÁÂÃø Á÷¼±µé, ¿ìÃø Á÷¼±µéÀ» ±¸ºĞÇÔ
+            selected_lines = ld.SeperateLines(lines);   // ì¢Œì¸¡ ì§ì„ ë“¤, ìš°ì¸¡ ì§ì„ ë“¤ì„ êµ¬ë¶„í•¨
 
             /* 
-            // ROI È­¸é¿¡¼­ Àß ³ª¿À´ÂÁö È®ÀÎÇÏ±â À§ÇÑ ºÎºĞ. ¼Óµµ Çâ»óÀ» À§ÇØ Å×½ºÆ® ¿Ü¿£ ÁÖ¼® Ã³¸®
+            // ROI í™”ë©´ì—ì„œ ì˜ ë‚˜ì˜¤ëŠ”ì§€ í™•ì¸í•˜ê¸° ìœ„í•œ ë¶€ë¶„. ì†ë„ í–¥ìƒì„ ìœ„í•´ í…ŒìŠ¤íŠ¸ ì™¸ì—” ì£¼ì„ ì²˜ë¦¬
             cvtColor(roi, roi, COLOR_GRAY2BGR);
             for (vector<Vec4i> lines : selected_lines) {
                 for (Vec4i l : lines) {
@@ -61,11 +61,11 @@ int main()
                 }
             }*/
 
-            ld.FindLanes(selected_lines);   // ¾ç Á÷¼±µé Áß ´ëÇ¥ Á÷¼±(Â÷¼±)À» °áÁ¤ÇÔ
-            lanes = ld.FindPos();   // rpos, lpos¸¦ ±¸ÇÔ
+            ld.FindLanes(selected_lines);   // ì–‘ ì§ì„ ë“¤ ì¤‘ ëŒ€í‘œ ì§ì„ (ì°¨ì„ )ì„ ê²°ì •í•¨
+            lanes = ld.FindPos();   // rpos, lposë¥¼ êµ¬í•¨
 
             /*
-            // È­¸é¿¡ Â÷¼±°ú rpos&lpos¸¦ ±×¸®´Â ºÎºĞ. ¼Óµµ Çâ»óÀ» À§ÇØ Å×½ºÆ® ¿Ü¿£ ÁÖ¼® Ã³¸®
+            // í™”ë©´ì— ì°¨ì„ ê³¼ rpos&lposë¥¼ ê·¸ë¦¬ëŠ” ë¶€ë¶„. ì†ë„ í–¥ìƒì„ ìœ„í•´ í…ŒìŠ¤íŠ¸ ì™¸ì—” ì£¼ì„ ì²˜ë¦¬
             frame = ld.DrawLines(frame, lanes);
             roi = ld.DrawLines(roi, lanes);
             */
@@ -85,7 +85,7 @@ int main()
         }
 
         /*
-        // È­¸é¿¡ °á°ú¸¦ ±×¸®´Â ºÎºĞ. ¼Óµµ Çâ»óÀ» À§ÇØ Å×½ºÆ® ¿Ü¿£ ÁÖ¼® Ã³¸®
+        // í™”ë©´ì— ê²°ê³¼ë¥¼ ê·¸ë¦¬ëŠ” ë¶€ë¶„. ì†ë„ í–¥ìƒì„ ìœ„í•´ í…ŒìŠ¤íŠ¸ ì™¸ì—” ì£¼ì„ ì²˜ë¦¬
         imshow("roi", roi);
         imshow("frame", frame);*/
 
